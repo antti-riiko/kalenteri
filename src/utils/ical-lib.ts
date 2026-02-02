@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { DateTime } from "luxon";
 
 export type ICalInput = {
   title: string;
@@ -16,7 +16,7 @@ export type ICalInput = {
  * - Newlines are converted to literal \n
  */
 const escapeText = (str: string): string =>
-  str.replace(/[\\,;]/g, (match) => `\\${match}`).replace(/\n/g, '\\n');
+  str.replace(/[\\,;]/g, (match) => `\\${match}`).replace(/\n/g, "\\n");
 
 /**
  * Format a Date as iCal local timestamp (TZID=timezone:YYYYMMDDTHHMMSS).
@@ -42,24 +42,22 @@ const generateICal = (input: ICalInput): string => {
     description,
     location,
     uid,
-    domain = 'example-domain.com',
+    domain = "example-domain.com",
   } = input;
 
   const finalUid = uid || `${crypto.randomUUID()}@${domain}`;
   const now = toCalDav(new Date());
 
-  const timezone = 'Europe/Helsinki';
-
   const lines = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Standardized ICal Lib//EN',
-    'CALSCALE:GREGORIAN',
-    'BEGIN:VEVENT',
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Standardized ICal Lib//EN",
+    "CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT",
     `UID:${finalUid}`,
     `DTSTAMP:${now}`,
-    `DTSTART;TZID=${timezone}:${toCalDav(start)}`,
-    `DTEND;TZID=${timezone}:${toCalDav(end)}`,
+    `DTSTART:${toCalDav(start)}`,
+    `DTEND:${toCalDav(end)}`,
     `SUMMARY:${escapeText(title)}`,
   ];
 
@@ -70,11 +68,11 @@ const generateICal = (input: ICalInput): string => {
     lines.push(`LOCATION:${escapeText(location)}`);
   }
 
-  lines.push('END:VEVENT');
-  lines.push('END:VCALENDAR');
+  lines.push("END:VEVENT");
+  lines.push("END:VCALENDAR");
 
   // Join with CRLF as required by RFC 5545
-  return lines.join('\r\n');
+  return lines.join("\r\n");
 };
 
 export { generateICal };
